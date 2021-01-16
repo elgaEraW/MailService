@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -12,8 +12,10 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { Link } from "react-router-dom";
+import { Collapse } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 
-function Copyright() {
+const Copyright = () => {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
@@ -24,7 +26,7 @@ function Copyright() {
       {"."}
     </Typography>
   );
-}
+};
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,15 +48,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SignUp = () => {
+const SignUp = (props) => {
   const classes = useStyles();
 
-  const [full_name, setFull_name] = useState("");
+  const checkIfLoggedIn = async () => {
+    let loginFlag = false;
+
+    await fetch("/api/get-login/").then((res) => {
+      if (res.status === 202) loginFlag = true;
+    });
+
+    if (loginFlag) props.history.push("/mail");
+  };
+
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [recovery_email, setRecovery_email] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm_password, setConfirm_password] = useState("");
-  const [collpaseFlag, setCollapseFlag] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [acceptPromotions, setAcceptPromotions] = useState(false);
+  const [collapseFlag, setCollapseFlag] = useState(false);
   const [error, setError] = useState("");
 
   const getCookie = (name) => {
@@ -72,9 +89,45 @@ const SignUp = () => {
     return cookieValue;
   };
 
-  const onFinish = () => {
+  const checkEmpty = () => {
+    if (firstName.trim() === "") {
+      setError("First Name is a required Field");
+      setCollapseFlag(true);
+      return true;
+    }
+
+    if (lastName.trim() === "") {
+      setError("Last Name is a required Field");
+      setCollapseFlag(true);
+      return true;
+    }
+
+    if (username.trim() === "") {
+      setError("Username is a required Field");
+      setCollapseFlag(true);
+      return true;
+    }
+
+    if (password.trim() === "") {
+      setError("Password is a required Field");
+      setCollapseFlag(true);
+      return true;
+    }
+
+    if (confirmPassword.trim() === "") {
+      setError("Confirm Password is a required Field");
+      setCollapseFlag(true);
+      return true;
+    }
+  };
+
+  const handleSubmit = async (event) => {
     var csrftoken = getCookie("csrftoken");
-    if (password.trim() === confirm_password.trim()) {
+    let flag = false;
+
+    if (checkEmpty()) return;
+
+    if (password.trim() !== confirmPassword.trim()) {
       setError("Passwords do not match!!!");
       setCollapseFlag(true);
       return;
@@ -86,17 +139,23 @@ const SignUp = () => {
         "X-CSRFToken": csrftoken,
       },
       body: JSON.stringify({
-        full_name: full_name,
-        username: username,
-        recovery_email: recovery_email,
-        password: password,
-        confirm_password: confirm_password,
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        username: username.trim(),
+        password: password.trim(),
+        accept_promotions: acceptPromotions,
       }),
     };
 
-    fetch("/api/create-user/", request_options)
-      .then((res) => res.json())
-      .then((data) => console.log(data));
+    await fetch("/api/create-user/", request_options).then((res) => {
+      if (res.status !== 200) {
+        setError("Username already taken!!!");
+        setCollapseFlag(true);
+        flag = true;
+      }
+    });
+    if (flag) return;
+    props.history.push("/");
   };
 
   return (
@@ -109,6 +168,9 @@ const SignUp = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+        <Collapse in={collapseFlag}>
+          <Alert severity="error">{error}</Alert>
+        </Collapse>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -121,6 +183,7 @@ const SignUp = () => {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                onChange={(event) => setFirstName(event.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -131,7 +194,8 @@ const SignUp = () => {
                 id="lastName"
                 label="Last Name"
                 name="lastName"
-                autoComplete="lname"
+                autoComplete="lastName"
+                onChange={(event) => setLastName(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -143,6 +207,7 @@ const SignUp = () => {
                 label="Username"
                 name="username"
                 autoComplete="username"
+                onChange={(event) => setUsername(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -155,6 +220,7 @@ const SignUp = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                onChange={(event) => setPassword(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -167,21 +233,23 @@ const SignUp = () => {
                 type="password"
                 id="confirm_password"
                 autoComplete="confirm_password"
+                onChange={(event) => setConfirmPassword(event.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                control={<Checkbox value="true" color="primary" />}
                 label="I want to receive inspiration, marketing promotions and updates via email."
+                onChange={(event) => setAcceptPromotions(event.target.checked)}
               />
             </Grid>
           </Grid>
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={handleSubmit}
           >
             Sign Up
           </Button>

@@ -19,10 +19,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import SearchIcon from "@material-ui/icons/Search";
-import { Button, ButtonGroup } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
-
-import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -127,7 +123,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -139,6 +135,18 @@ const Header = () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const checkIfLoggedIn = async () => {
+    let loginFlag = true;
+
+    await fetch("/api/get-login/").then((res) => {
+      if (res.status === 202) loginFlag = false;
+    });
+
+    if (loginFlag) props.history.push("/");
+  };
+
+  checkIfLoggedIn();
 
   return (
     <div className={classes.root}>

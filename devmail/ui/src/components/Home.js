@@ -30,8 +30,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Home = () => {
+const Home = (props) => {
   const classes = useStyles();
+
+  const checkIfLoggedIn = async () => {
+    let loginFlag = false;
+
+    await fetch("/api/get-login/").then((res) => {
+      if (res.status === 202) loginFlag = true;
+    });
+
+    if (loginFlag) props.history.push("/mail");
+  };
+
+  checkIfLoggedIn();
 
   return (
     <main className={classes.content}>
@@ -49,6 +61,7 @@ const Home = () => {
             to="/signup"
             component={Link}
             className={classes.signupButton}
+            {...props}
           >
             SignUp
           </Button>

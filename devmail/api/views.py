@@ -1,13 +1,14 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import bcrypt
+from rest_framework import status
+from rest_framework.response import Response
+from .models import User
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from .serializers import UserSerializer, RegisterUserSerializer
-from .models import User
-from rest_framework.response import Response
-from rest_framework import status
-import bcrypt
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from .serializers import UserSerializer, RegisterUserSerializer, \
+    LoginUserSerializer
 
 
 # Create your views here.
@@ -25,24 +26,21 @@ class RegisterUser(APIView):
 
     def post(self, request, format=None):
 
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
-
         serializer = self.serializer_class(data=request.data)
 
         if not serializer.is_valid():
 
-            return Response({"Error": "Invalid Data"},
+            return Response(data={"Error": "Invalid Data"},
                             status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        full_name = serializer.data.get('full_name')
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        first_name = serializer.data.get('first_name')
+        last_name = serializer.data.get('last_name')
         username = serializer.data.get('username')
-        recovery_email = serializer.data.get('recovery_email')
         password = serializer.data.get('password')
-        confirm_password = serializer.data.get('confirm_password')
-        if not password == confirm_password:
-            return Response({"Error": "Passwords do not match"},
-                            status=status.HTTP_400_BAD_REQUEST)
+        accept_promotions = serializer.data.get('accept_promotions')
 
         password = bcrypt.hashpw(password, bcrypt.gensalt(12))
         queryset = User.objects.filter(username=username)
@@ -50,9 +48,61 @@ class RegisterUser(APIView):
         if queryset.exists():
             return Response({"Error": "User Already Exists"},
                             status=status.HTTP_409_CONFLICT)
-        user = User(full_name=full_name, username=username,
-                    recovery_email=recovery_email, password=password)
+        user = User(first_name=first_name, last_name=last_name,
+                    username=username, password=password,
+                    accept_promotions=accept_promotions)
         user.save()
 
         return Response({"Success": "User Added"},
-                        status=status.HTTP_201_CREATED)
+                        status=status.HTTP_200_OK)
+
+
+class GetLogin(APIView):
+
+    def get(self, request, format=None):
+
+        if not self.request.session.exists(self.request.session.session_key):
+
+            return Response(data={"Error": "Not logged in"},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data={"Success": "Logged In"},
+                        status=status.HTTP_202_ACCEPTED)
+
+
+class LoginUser(APIView):
+
+    serializer_class = LoginUserSerializer
+
+    def post(self, request, format=None):
+
+        serializer = self.serializer_class(data=request.data)
+
+        if not serializer.is_valid():
+
+            return Response(data={"Error": "Invalid Data"},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        username = serializer.data.get('username')
+        password = serializer.data.get('password')
+        remember = serializer.data.get('remember')
+
+        queryset = User.objects.filter(username=username)
+
+        if not queryset.exists():
+
+            return Response(data={"Error": "User Not Found"},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        user = queryset[0]
+        hashed_password = user.password
+
+        if not bcrypt.checkpw(password, hashed_password):
+
+            return Response(data={"Error": "Wrong Credentials"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        return Response(data={"Success": "Logged In"},
+                        status=status.HTTP_202_ACCEPTED)

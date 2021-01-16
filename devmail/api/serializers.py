@@ -6,16 +6,25 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('full_name', 'username', 'recovery_email',
-                  'created_at')
+        fields = ('first_name', 'last_name', 'username',
+                  'accept_promotions', 'created_at')
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
 
-    confirm_password = serializers.CharField()
+    class Meta:
+
+        model = User
+        fields = ('first_name', 'last_name', 'username',
+                  'password', 'accept_promotions')
+
+
+class LoginUserSerializer(serializers.ModelSerializer):
+
+    username = serializers.CharField()
+    remember = serializers.BooleanField()
 
     class Meta:
 
         model = User
-        fields = ('full_name', 'username', 'recovery_email',
-                  'password', 'confirm_password')
+        fields = ('username', 'password', 'remember')

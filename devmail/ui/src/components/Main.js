@@ -12,15 +12,10 @@ const Main = (props) => {
       <div className="container">
         <Router>
           <Switch>
-            <Route path="/signup">
-              <SignUp />
-            </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
+            <Route path="/signup" component={SignUp} />
+            <Route path="/login" component={Login} />
+            <Route path="/mail" component={Header} />
+            <Route path="/" component={Home} />
           </Switch>
         </Router>
       </div>
