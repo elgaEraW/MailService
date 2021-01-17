@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { fade, makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import InputBase from "@material-ui/core/InputBase";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -19,6 +18,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import SearchIcon from "@material-ui/icons/Search";
+import List from "@material-ui/core/List";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import FolderIcon from "@material-ui/icons/Folder";
+import Avatar from "@material-ui/core/Avatar";
 
 const drawerWidth = 240;
 
@@ -121,12 +124,21 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+  },
 }));
 
 const Header = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [mailData, setMailData] = useState({});
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -147,6 +159,46 @@ const Header = (props) => {
   };
 
   checkIfLoggedIn();
+
+  // const getMailData = async () => {
+  //   await fetch("/api/mail/")
+  //     .then((res) => res.json())
+  //     .then((data) => setMailData(data));
+  // };
+
+  useEffect(async () => {
+    await fetch("/api/mail/")
+      .then((res) => res.json())
+      .then((data) => setMailData(data));
+  }, []);
+
+  // getMailData();
+
+  // function generate(element) {
+  //   return [0, 1, 2].map((value) =>
+  //     React.cloneElement(element, {
+  //       key: value,
+  //     })
+  //   );
+  // }
+
+  const generate = () => {
+    return (
+      <List dense={false}>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar>
+              <FolderIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Single-line item"
+            secondary={false ? "Secondary text" : null}
+          />
+        </ListItem>
+      </List>
+    );
+  };
 
   return (
     <div className={classes.root}>
@@ -232,6 +284,19 @@ const Header = (props) => {
           ))}
         </List>
       </Drawer>
+      <List dense={false}>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar>
+              <FolderIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Single-line item"
+            secondary={false ? "Secondary text" : null}
+          />
+        </ListItem>
+      </List>
     </div>
   );
 };

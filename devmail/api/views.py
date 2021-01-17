@@ -3,12 +3,12 @@ from django.views.decorators.csrf import csrf_exempt
 import bcrypt
 from rest_framework import status
 from rest_framework.response import Response
-from .models import User
+from .models import User, Mail
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from .serializers import UserSerializer, RegisterUserSerializer, \
-    LoginUserSerializer
+    LoginUserSerializer, MailSerializer
 
 
 # Create your views here.
@@ -52,6 +52,8 @@ class RegisterUser(APIView):
                     username=username, password=password,
                     accept_promotions=accept_promotions)
         user.save()
+
+        self.request.session['username'] = username
 
         return Response({"Success": "User Added"},
                         status=status.HTTP_200_OK)
@@ -103,6 +105,25 @@ class LoginUser(APIView):
 
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
+            self.request.session['username'] = username
 
         return Response(data={"Success": "Logged In"},
                         status=status.HTTP_202_ACCEPTED)
+
+
+class ListMails(APIView):
+
+    serializer_class = MailSerializer
+
+    def get(self, request, format=None):
+
+        queryset = Mail.objects.filter(
+            receiver=self.request.session['username'])
+
+        data = []
+
+        for entry in queryset:
+
+            data.append(self.serializer_class(entry).data)
+
+        return Response(data={"data": data}, status=status.HTTP_200_OK)

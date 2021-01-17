@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Mail
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,3 +28,11 @@ class LoginUserSerializer(serializers.ModelSerializer):
 
         model = User
         fields = ('username', 'password', 'remember')
+
+
+class MailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Mail
+        fields = ('sender', 'receiver', 'subject', 'message', 'created_at')
