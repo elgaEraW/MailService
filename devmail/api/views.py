@@ -127,3 +127,17 @@ class ListMails(APIView):
             data.append(self.serializer_class(entry).data)
 
         return Response(data={"data": data}, status=status.HTTP_200_OK)
+
+
+class LogoutUser(APIView):
+
+    def get(self, request, format=None):
+
+        if self.request.session.exists(self.request.session.session_key):
+            self.request.session.delete(
+                self.request.session._get_session_key())
+            return Response(data={"Success": "Logged Out"},
+                            status=status.HTTP_200_OK)
+
+        return Response(data={"Error": "Not logged in"},
+                        status=status.HTTP_401_UNAUTHORIZED)

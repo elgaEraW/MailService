@@ -20,8 +20,9 @@ import MailIcon from "@material-ui/icons/Mail";
 import SearchIcon from "@material-ui/icons/Search";
 import List from "@material-ui/core/List";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import FolderIcon from "@material-ui/icons/Folder";
+import Checkbox from "@material-ui/core/Checkbox";
 import Avatar from "@material-ui/core/Avatar";
+import { Button } from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -138,6 +139,7 @@ const Header = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [effectFlag, setEffectFlag] = useState(false);
   const [mailData, setMailData] = useState({});
 
   const handleDrawerOpen = () => {
@@ -160,44 +162,50 @@ const Header = (props) => {
 
   checkIfLoggedIn();
 
-  // const getMailData = async () => {
-  //   await fetch("/api/mail/")
-  //     .then((res) => res.json())
-  //     .then((data) => setMailData(data));
-  // };
-
   useEffect(async () => {
     await fetch("/api/mail/")
       .then((res) => res.json())
       .then((data) => setMailData(data));
-  }, []);
+  }, [effectFlag]);
 
-  // getMailData();
-
-  // function generate(element) {
-  //   return [0, 1, 2].map((value) =>
-  //     React.cloneElement(element, {
-  //       key: value,
-  //     })
-  //   );
-  // }
+  const generateListItem = (data) => {
+    return (
+      <ListItem>
+        <ListItemAvatar>
+          <Checkbox edge="start" tabIndex={-1} disableRipple />
+        </ListItemAvatar>
+        <ListItemText
+          primary={data.sender}
+          secondary={false ? "Secondary text" : null}
+        />
+        <ListItemText
+          primary={data.subject}
+          secondary={false ? "Secondary text" : null}
+        />
+      </ListItem>
+    );
+  };
 
   const generate = () => {
+    const final = [];
     return (
       <List dense={false}>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <FolderIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary="Single-line item"
-            secondary={false ? "Secondary text" : null}
-          />
-        </ListItem>
+        {mailData.data
+          ? mailData.data.forEach((element) => {
+              final.push(generateListItem(element));
+            })
+          : null}
+        {final}
       </List>
     );
+  };
+
+  const handleLogout = async (event) => {
+    await fetch("/api/logout/").then((res) => {
+      if (res.status === 200) {
+        props.history.push("/");
+      }
+    });
   };
 
   return (
@@ -236,6 +244,13 @@ const Header = (props) => {
               }}
               inputProps={{ "aria-label": "search" }}
             />
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLogout}
+            >
+              Log Out
+            </Button>
           </div>
         </Toolbar>
       </AppBar>
@@ -284,19 +299,10 @@ const Header = (props) => {
           ))}
         </List>
       </Drawer>
-      <List dense={false}>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <FolderIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary="Single-line item"
-            secondary={false ? "Secondary text" : null}
-          />
-        </ListItem>
-      </List>
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {generate()}
+      </main>
     </div>
   );
 };
