@@ -81,6 +81,9 @@ const useStyles = makeStyles((theme) => ({
   search: {
     position: "absolute",
     float: "right",
+    display: "flex",
+    justifyContent: "left",
+    alignItems: "left",
     right: 10,
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
@@ -90,24 +93,31 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     width: "100%",
     [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
+      // marginLeft: theme.spacing(1),
       width: "auto",
     },
     [theme.breakpoints.down("xs")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto",
-      position: "fixed",
-      right: 10,
+      // marginLeft: theme.spacing(1),
+      width: "50%",
+      height: "65%",
+      // position: "fixed",
+      // display: "block",
+      // right: 10,
     },
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
     height: "100%",
-    position: "absolute",
+    position: "relative",
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    [theme.breakpoints.up("sm")]: {
+      // marginLeft: theme.spacing(1),
+      width: "auto",
+      marginTop: 7,
+    },
   },
   inputRoot: {
     color: "inherit",
@@ -115,9 +125,9 @@ const useStyles = makeStyles((theme) => ({
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    // paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
-    width: "100%",
+    width: "auto%",
     [theme.breakpoints.up("sm")]: {
       width: "12ch",
       "&:focus": {
@@ -132,6 +142,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
+  },
+  logout: {
+    // marginLeft: 10,
   },
 }));
 
@@ -238,19 +251,22 @@ const Header = (props) => {
             </div>
             <InputBase
               placeholder="Search…"
+              onFocus={handleDrawerClose}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
             />
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLogout}
-            >
-              Log Out
-            </Button>
+            <div className={classes.logout}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </Toolbar>
       </AppBar>
