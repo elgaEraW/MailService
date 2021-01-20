@@ -54,6 +54,7 @@ class RegisterUser(APIView):
         user.save()
 
         self.request.session['username'] = username
+        self.request.session.set_expiry(0)
 
         return Response({"Success": "User Added"},
                         status=status.HTTP_200_OK)
@@ -106,6 +107,8 @@ class LoginUser(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
             self.request.session['username'] = username
+            if not remember:
+                self.request.session.set_expiry(0)
 
         return Response(data={"Success": "Logged In"},
                         status=status.HTTP_202_ACCEPTED)
@@ -134,8 +137,7 @@ class LogoutUser(APIView):
     def get(self, request, format=None):
 
         if self.request.session.exists(self.request.session.session_key):
-            self.request.session.delete(
-                self.request.session._get_session_key())
+            self.request.session.flush()
             return Response(data={"Success": "Logged Out"},
                             status=status.HTTP_200_OK)
 
