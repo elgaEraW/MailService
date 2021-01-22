@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+// React Module Imports
+import React from "react";
 import { render } from "react-dom";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Header from "./Header";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
+// Component Imports
+import MailList from "./MailList";
+import Compose from "./Compose";
 import SignUp from "./SignUp";
 import Login from "./Login";
 import Home from "./Home";
@@ -14,7 +18,8 @@ const Main = (props) => {
           <Switch>
             <Route path="/signup" component={SignUp} />
             <Route path="/login" component={Login} />
-            <Route path="/mail" component={Header} />
+            <Route path="/mail" component={MailList} />
+            <Route path="/compose" component={Compose} />
             <Route path="/" component={Home} />
           </Switch>
         </Router>

@@ -1,41 +1,20 @@
+// React Module Imports
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import { Button, ButtonGroup } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
-
 import { Link } from "react-router-dom";
 
-const useStyles = makeStyles((theme) => ({
-  content: {
-    margin: 0,
-    position: "absolute",
-    top: "40%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-  },
-  signupButton: {
-    marginRight: 10,
-  },
-  title: {
-    fontWeight: "bold",
-  },
-}));
+// Material UI Imports
+import Typography from "@material-ui/core/Typography";
+import { Button } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
+
+// Component Imports
+import homeStyles from "../styles/homeStyles";
+import checkIfLoggedIn from "../utils/checkIfLoggedIn";
 
 const Home = (props) => {
-  const classes = useStyles();
+  const classes = homeStyles();
 
-  const checkIfLoggedIn = async () => {
-    let loginFlag = false;
-
-    await fetch("/api/get-login/").then((res) => {
-      if (res.status === 202) loginFlag = true;
-    });
-
-    if (loginFlag) props.history.push("/mail");
-  };
-
-  checkIfLoggedIn();
+  checkIfLoggedIn().then((res) => (res ? props.history.push("/mail") : null));
 
   return (
     <main className={classes.content}>
