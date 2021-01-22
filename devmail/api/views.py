@@ -8,7 +8,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from .serializers import UserSerializer, RegisterUserSerializer, \
-    LoginUserSerializer, MailSerializer
+    LoginUserSerializer, MailSerializer, SendMailSerializer
 
 
 # Create your views here.
@@ -143,3 +143,33 @@ class LogoutUser(APIView):
 
         return Response(data={"Error": "Not logged in"},
                         status=status.HTTP_401_UNAUTHORIZED)
+
+
+class SendMail(APIView):
+
+    serializer_class = SendMailSerializer
+
+    def post(self, request, format=None):
+
+        if not self.request.session.exists(self.request.session.session_key):
+            return Response(data={"Error": "Not logged in"},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = self.serializer_class(data=request.data)
+
+        if not serializer.is_valid():
+
+            return Response(data={"Error": "Invalid Data"},
+                            status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        to = serializer.data.get('to')
+        subject = serializer.data.get('subject')
+        message = serializer.data.get('message')
+
+        mail = Mail(sender=self.request.session['username'],
+                    receiver=to, subject=subject, message=message)
+
+        mail.save()
+
+        return Response({"Success": "User Added"},
+                        status=status.HTTP_200_OK)

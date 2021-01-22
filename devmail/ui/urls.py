@@ -6,4 +6,5 @@ urlpatterns = [
     path('signup/', index, name='signup'),
     path('login/', index, name='login'),
     path('mail/', index, name='mail'),
+    path('compose/', index, name='mail'),
 ]
