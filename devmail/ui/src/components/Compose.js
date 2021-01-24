@@ -60,18 +60,13 @@ const Compose = (props) => {
     };
 
     await fetch("/api/send-mail/", request_options).then((res) => {
-      if (res.status === 401) {
-        setError("Username Not Found");
-        setCollapseFlag(true);
-        flag = true;
-      } else if (res.status === 406) {
+      if (res.status === 406) {
         setError("Wrong Data");
         setCollapseFlag(true);
-        flag = true;
+      } else {
+        props.history.push("/mail/");
       }
     });
-    if (flag) props.history.push("/");
-    else props.history.push("/mail");
   };
 
   return (
