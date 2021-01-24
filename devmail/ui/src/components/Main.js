@@ -4,6 +4,7 @@ import { render } from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 // Component Imports
+import Detail from "./Detail";
 import MailList from "./MailList";
 import Compose from "./Compose";
 import SignUp from "./SignUp";
@@ -12,19 +13,18 @@ import Home from "./Home";
 
 const Main = (props) => {
   return (
-    <>
-      <div className="container">
-        <Router>
-          <Switch>
-            <Route path="/signup" component={SignUp} />
-            <Route path="/login" component={Login} />
-            <Route path="/mail" component={MailList} />
-            <Route path="/compose" component={Compose} />
-            <Route path="/" component={Home} />
-          </Switch>
-        </Router>
-      </div>
-    </>
+    <div className="container">
+      <Router>
+        <Switch>
+          <Route path="/signup" component={SignUp} />
+          <Route path="/login" component={Login} />
+          <Route path="/mail/:slug" component={Detail} />
+          <Route path="/mail" component={MailList} />
+          <Route path="/compose" component={Compose} />
+          <Route path="/" component={Home} />
+        </Switch>
+      </Router>
+    </div>
   );
 };
 

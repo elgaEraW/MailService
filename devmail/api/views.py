@@ -1,6 +1,9 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+
 import bcrypt
+import base64
+
 from rest_framework import status
 from rest_framework.response import Response
 from .models import User, Mail
@@ -8,7 +11,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from .serializers import UserSerializer, RegisterUserSerializer, \
-    LoginUserSerializer, MailSerializer, SendMailSerializer
+    LoginUserSerializer, MailSerializer, SendMailSerializer, \
+    DetailSerialzer
 
 
 # Create your views here.
@@ -151,10 +155,6 @@ class SendMail(APIView):
 
     def post(self, request, format=None):
 
-        if not self.request.session.exists(self.request.session.session_key):
-            return Response(data={"Error": "Not logged in"},
-                            status=status.HTTP_401_UNAUTHORIZED)
-
         serializer = self.serializer_class(data=request.data)
 
         if not serializer.is_valid():
@@ -172,4 +172,26 @@ class SendMail(APIView):
         mail.save()
 
         return Response({"Success": "User Added"},
+                        status=status.HTTP_200_OK)
+
+
+class DetailMail(APIView):
+
+    serializer_class = DetailSerialzer
+
+    def get(self, request, format=None, *args, **kwargs):
+
+        decoded = str(base64.b64decode(kwargs['slug']))
+        id = int(decoded.split("<===>", 2)[1])
+
+        queryset = Mail.objects.filter(id=id)
+
+        if not queryset.exists():
+
+            return Response(data={"Error": "Wrong request"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        data = self.serializer_class(queryset[0]).data
+
+        return Response({"Success": data},
                         status=status.HTTP_200_OK)

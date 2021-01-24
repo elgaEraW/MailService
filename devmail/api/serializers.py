@@ -35,7 +35,7 @@ class MailSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Mail
-        fields = ('sender', 'receiver', 'subject', 'message', 'created_at')
+        fields = ('id', 'sender', 'subject', 'created_at')
 
 
 class SendMailSerializer(serializers.ModelSerializer):
@@ -46,3 +46,12 @@ class SendMailSerializer(serializers.ModelSerializer):
 
         model = Mail
         fields = ('to', 'subject', 'message')
+
+
+class DetailSerialzer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Mail
+        fields = ('id', 'sender', 'receiver',
+                  'subject', 'message', 'created_at')
