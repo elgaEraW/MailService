@@ -1,4 +1,4 @@
-const getCookie = (name) => {
+export default (name) => {
   var cookieValue = null;
   if (document.cookie && document.cookie !== "") {
     var cookies = document.cookie.split(";");
@@ -12,5 +12,3 @@ const getCookie = (name) => {
   }
   return cookieValue;
 };
-
-export default getCookie;

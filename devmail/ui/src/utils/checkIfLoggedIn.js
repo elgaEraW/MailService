@@ -1,4 +1,4 @@
-const checkIfLoggedIn = async () => {
+export default async () => {
   let loginFlag = false;
 
   await fetch("/api/get-login/").then((res) => {
@@ -7,5 +7,3 @@ const checkIfLoggedIn = async () => {
 
   return loginFlag;
 };
-
-export default checkIfLoggedIn;
