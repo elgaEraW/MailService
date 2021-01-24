@@ -70,8 +70,10 @@ const Header = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            DevMail
+          <Typography variant="h6" noWrap className={classes.title}>
+            <Link to="/mail" className={classes.link}>
+              DevMail
+            </Link>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -86,15 +88,15 @@ const Header = (props) => {
               }}
               inputProps={{ "aria-label": "search" }}
             />
-            <div className={classes.logout}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            </div>
+          </div>
+          <div className={classes.logout}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
           </div>
         </Toolbar>
       </AppBar>
@@ -123,19 +125,19 @@ const Header = (props) => {
         <Divider />
         <List>
           <ListItem button key="inbox">
-            <ListItemIcon>
-              <Link to="/mail">
+            <Link to="/mail" className={classes.link}>
+              <ListItemIcon>
                 <InboxIcon />
-              </Link>
-            </ListItemIcon>
+              </ListItemIcon>
+            </Link>
             <ListItemText primary="Inbox" />
           </ListItem>
           <ListItem button key="compose">
-            <ListItemIcon>
-              <Link to="/compose">
+            <Link to="/compose" className={classes.link}>
+              <ListItemIcon>
                 <MailIcon />
-              </Link>
-            </ListItemIcon>
+              </ListItemIcon>
+            </Link>
             <ListItemText primary="Compose" />
           </ListItem>
         </List>

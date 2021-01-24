@@ -1,6 +1,7 @@
 import { fade, makeStyles } from "@material-ui/core/styles";
 
 const drawerWidth = 240;
+const buttonWidth = 120;
 
 const headerStyles = makeStyles((theme) => ({
   root: {
@@ -52,7 +53,7 @@ const headerStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(7),
   },
   search: {
     position: "absolute",
@@ -60,7 +61,7 @@ const headerStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "left",
     alignItems: "left",
-    right: 10,
+    right: buttonWidth,
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "&:hover": {
@@ -68,13 +69,14 @@ const headerStyles = makeStyles((theme) => ({
     },
     marginLeft: 0,
     width: "100%",
+
     [theme.breakpoints.up("sm")]: {
       // marginLeft: theme.spacing(1),
       width: "auto",
     },
     [theme.breakpoints.down("xs")]: {
       // marginLeft: theme.spacing(1),
-      width: "50%",
+      width: "auto",
       height: "65%",
       // position: "fixed",
       // display: "block",
@@ -103,12 +105,15 @@ const headerStyles = makeStyles((theme) => ({
     // vertical padding + font size from searchIcon
     // paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
-    width: "auto%",
+    width: "12ch",
     [theme.breakpoints.up("sm")]: {
       width: "12ch",
       "&:focus": {
         width: "20ch",
       },
+    },
+    [theme.breakpoints.down("xs")]: {
+      width: "12ch",
     },
   },
   toolbar: {
@@ -120,7 +125,21 @@ const headerStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   logout: {
-    // marginLeft: 10,
+    position: "fixed",
+    float: "right",
+    display: "flex",
+    justifyContent: "left",
+    alignItems: "left",
+    right: 10,
+  },
+  title: {
+    [theme.breakpoints.down("xs")]: {
+      display: "none",
+    },
+  },
+  link: {
+    textDecoration: "none",
+    color: "inherit",
   },
 }));
 
