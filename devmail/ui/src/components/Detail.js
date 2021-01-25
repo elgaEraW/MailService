@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 
 // Material UI Imports
+import Grid from "@material-ui/core/Grid";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 // Component Imports
 import Header from "./Header";
@@ -36,11 +38,22 @@ const Detail = (props) => {
         <div className={classes.toolbar} />
         {mailData ? (
           <>
-            <h1>id: {mailData.id}</h1>
-            <h1>S: {mailData.subject}</h1>
-            <h1>Send: {mailData.sender}</h1>
-            <h1>Rec: {mailData.receiver}</h1>
-            <h1>T: {mailData.created_at}</h1>
+            <h1>{mailData.subject}</h1>
+            <Grid container direction="row" alignItems="center">
+              <Grid item>
+                <AccountCircleIcon className={classes.userIcon} />
+              </Grid>
+              <Grid item className={classes.sender}>
+                <h2>{mailData.sender}</h2>
+              </Grid>
+              <Grid item className={classes.time}>
+                <h2>
+                  {new Date(mailData.created_at).toDateString()} -{" "}
+                  {new Date(mailData.created_at).toLocaleTimeString()}
+                </h2>
+              </Grid>
+            </Grid>
+            <pre className={classes.message}>{mailData.message}</pre>
           </>
         ) : null}
       </main>

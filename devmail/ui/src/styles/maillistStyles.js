@@ -51,7 +51,7 @@ const maillistStyles = makeStyles((theme) => ({
     },
   },
   link: {
-    textDecoration: "none",
+    textDecorationLine: "none",
     color: "inherit",
   },
   rule: {

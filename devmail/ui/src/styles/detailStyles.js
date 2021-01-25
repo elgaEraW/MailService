@@ -16,6 +16,27 @@ const detailStyles = makeStyles((theme) => ({
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  userIcon: {
+    fontSize: "32px",
+    display: "inline",
+  },
+  sender: {
+    marginLeft: "2ch",
+  },
+  message: {
+    fontSize: "1.2em",
+    fontFamily: "inherit",
+  },
+  time: {
+    position: "absolute",
+    float: "right",
+    right: "5ch",
+  },
 }));
 
 export default detailStyles;
