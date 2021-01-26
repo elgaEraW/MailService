@@ -69,9 +69,21 @@ const Compose = (props) => {
     });
   };
 
+  const handleSearch = (string) => {
+    props.history.push({
+      pathname: "/mail/",
+      state: string,
+    });
+  };
+
   return (
     <div className={classes.root}>
-      <Header history={props.history} />
+      <Header
+        history={props.history}
+        search={handleSearch}
+        resetReceived={() => props.history.push("/mail/")}
+        resetSent={() => {}}
+      />
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Container fixed>

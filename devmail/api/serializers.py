@@ -35,7 +35,7 @@ class MailSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Mail
-        fields = ('id', 'sender', 'subject', 'created_at')
+        fields = ('id', 'sender', 'subject', 'receiver', 'created_at')
 
 
 class SendMailSerializer(serializers.ModelSerializer):

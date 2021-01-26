@@ -10,6 +10,7 @@ from .models import User, Mail
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
+from django.db.models import Q
 from .serializers import UserSerializer, RegisterUserSerializer, \
     LoginUserSerializer, MailSerializer, SendMailSerializer, \
     DetailSerialzer
@@ -195,3 +196,54 @@ class DetailMail(APIView):
 
         return Response({"Success": data},
                         status=status.HTTP_200_OK)
+
+
+class SentMails(APIView):
+
+    serializer_class = MailSerializer
+
+    def get(self, request, format=None):
+
+        queryset = Mail.objects.filter(
+            sender=self.request.session['username'])
+
+        data = []
+
+        for entry in queryset:
+
+            data.append(self.serializer_class(entry).data)
+
+        return Response(data={"data": data}, status=status.HTTP_200_OK)
+
+
+class SearchMails(APIView):
+
+    serializer_class = MailSerializer
+
+    def get(self, request, format=None, *args, **kwargs):
+
+        string = kwargs['string'].split('-')
+
+        if string[0] == 'r':
+
+            queryset = Mail.objects.filter(
+                Q(receiver=self.request.session['username']) &
+                (Q(subject__icontains=string[1]) |
+                 Q(message__icontains=string[1])))
+
+        elif string[0] == 's':
+            queryset = Mail.objects.filter(
+                Q(sender=self.request.session['username']) &
+                (Q(subject__icontains=string[1]) |
+                 Q(message__icontains=string[1])))
+        else:
+            return Response(data={'Error': "Wrong String"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        data = []
+
+        for entry in queryset:
+
+            data.append(self.serializer_class(entry).data)
+
+        return Response(data={"data": data}, status=status.HTTP_200_OK)

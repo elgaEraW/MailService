@@ -20,7 +20,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import ForwardIcon from "@material-ui/icons/Forward";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
 import SearchIcon from "@material-ui/icons/Search";
 import List from "@material-ui/core/List";
 import { Button } from "@material-ui/core";
@@ -32,6 +33,7 @@ const Header = (props) => {
   const classes = headerStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -47,6 +49,18 @@ const Header = (props) => {
         props.history.push("/");
       }
     });
+  };
+
+  const handleForward = (location) => {
+    props.history.push("/" + location);
+  };
+
+  const handleSearch = (event) => {
+    if (event.code === "Enter") {
+      let data = search;
+      setSearch("");
+      props.search(data);
+    }
   };
 
   return (
@@ -81,12 +95,20 @@ const Header = (props) => {
             </div>
             <InputBase
               placeholder="Search…"
+              value={search}
               onFocus={handleDrawerClose}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
+              onChange={(event) => setSearch(event.target.value)}
+              onSubmit={() => {
+                props.search(search);
+              }}
+              onKeyDown={(event) => {
+                handleSearch(event);
+              }}
             />
           </div>
           <div className={classes.logout}>
@@ -125,20 +147,45 @@ const Header = (props) => {
         <Divider />
         <List>
           <ListItem button key="inbox">
-            <Link to="/mail" className={classes.link}>
+            <Link
+              to="/mail"
+              className={classes.link}
+              onClick={() => props.resetReceived()}
+            >
               <ListItemIcon>
                 <InboxIcon />
               </ListItemIcon>
             </Link>
-            <ListItemText primary="Inbox" />
+            <ListItemText
+              primary="Inbox"
+              onClick={() => handleForward("mail/")}
+            />
           </ListItem>
           <ListItem button key="compose">
             <Link to="/compose" className={classes.link}>
               <ListItemIcon>
-                <MailIcon />
+                <AddCircleIcon />
               </ListItemIcon>
             </Link>
-            <ListItemText primary="Compose" />
+            <ListItemText
+              primary="Compose"
+              onClick={() => handleForward("compose/")}
+            />
+          </ListItem>
+          <ListItem button key="sent">
+            <Link
+              to="/sent"
+              className={classes.link}
+              onClick={() => props.resetSent()}
+            >
+              <ListItemIcon>
+                <ForwardIcon />
+              </ListItemIcon>
+            </Link>
+            <ListItemText
+              primary="Sent"
+              onClick={() => handleForward("sent/")}
+            />
           </ListItem>
         </List>
       </Drawer>

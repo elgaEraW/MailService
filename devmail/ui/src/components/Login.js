@@ -78,10 +78,14 @@ const Login = (props) => {
       if (res.status === 401) {
         setError("Username Not Found");
         setCollapseFlag(true);
+        setUsername("");
+        setPassword("");
         flag = true;
       } else if (res.status === 400) {
         setError("Wrong Credentials");
         setCollapseFlag(true);
+        setUsername("");
+        setPassword("");
         flag = true;
       }
     });
@@ -107,6 +111,7 @@ const Login = (props) => {
             variant="outlined"
             margin="normal"
             required
+            value={username}
             fullWidth
             id="username"
             label="Username"
@@ -120,6 +125,7 @@ const Login = (props) => {
             margin="normal"
             required
             fullWidth
+            value={password}
             name="password"
             label="Password"
             type="password"

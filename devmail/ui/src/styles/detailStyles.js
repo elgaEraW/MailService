@@ -31,11 +31,19 @@ const detailStyles = makeStyles((theme) => ({
   message: {
     fontSize: "1.2em",
     fontFamily: "inherit",
+    marginLeft: "5ch",
+    marginRight: "5ch",
+    // width: "100%",
+    whiteSpace: "pre-wrap",
+    overflow: "hidden",
   },
   time: {
     position: "absolute",
     float: "right",
     right: "5ch",
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
   },
 }));
 

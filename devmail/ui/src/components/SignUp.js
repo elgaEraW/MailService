@@ -105,6 +105,8 @@ const SignUp = (props) => {
       if (res.status !== 200) {
         setError("Username already taken!!!");
         setCollapseFlag(true);
+        setPassword("");
+        setConfirmPassword("");
         flag = true;
       }
     });
@@ -130,6 +132,7 @@ const SignUp = (props) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete="fname"
+                value={firstName}
                 name="firstName"
                 variant="outlined"
                 required
@@ -143,6 +146,7 @@ const SignUp = (props) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
+                value={lastName}
                 required
                 fullWidth
                 id="lastName"
@@ -156,6 +160,7 @@ const SignUp = (props) => {
               <TextField
                 variant="outlined"
                 required
+                value={username}
                 fullWidth
                 id="username"
                 label="Username"
@@ -168,6 +173,7 @@ const SignUp = (props) => {
               <TextField
                 variant="outlined"
                 required
+                value={password}
                 fullWidth
                 name="password"
                 label="Password"
@@ -181,6 +187,7 @@ const SignUp = (props) => {
               <TextField
                 variant="outlined"
                 required
+                value={confirmPassword}
                 fullWidth
                 name="confirm_password"
                 label="Confirm Password"
