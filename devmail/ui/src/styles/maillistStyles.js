@@ -1,24 +1,14 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 const maillistStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  toolbar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-  },
   sender: {
     width: "10%",
+    position: "absolute",
     fontSize: "1.1em",
+    cursor: "pointer",
+    height: "100%",
+    top: "30%",
+    left: "7ch",
   },
   subject: {
     position: "absolute",
@@ -29,15 +19,21 @@ const maillistStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     fontSize: "1.1em",
+    cursor: "pointer",
+    height: "100%",
+    top: "30%",
   },
   created_at: {
     position: "absolute",
     float: "right",
-    right: "2%",
+    right: "2ch",
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
     fontSize: "1.1em",
+    cursor: "pointer",
+    height: "100%",
+    top: "30%",
   },
   listItem: {
     // borderTop: "1px ridge grey",
